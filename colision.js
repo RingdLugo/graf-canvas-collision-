@@ -53,8 +53,6 @@ class Circle {
     }
 
     checkCollision(circles) {
-        let isCurrentlyColliding = false;
-
         for (let other of circles) {
             if (this === other) continue;
 
@@ -63,24 +61,27 @@ class Circle {
             let distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < this.radius + other.radius) {
-                isCurrentlyColliding = true;
-                this.color = "#0000FF";
-                other.color = "#0000FF";
-
-                // Intercambiar velocidades para simular rebote
-                let tempDx = this.dx;
-                let tempDy = this.dy;
-                this.dx = other.dx;
-                this.dy = other.dy;
-                other.dx = tempDx;
-                other.dy = tempDy;
+                this.flashColor();
+                other.flashColor();
+                
+                // Calcular el rebote en la dirección opuesta
+                let angle = Math.atan2(dy, dx);
+                let speed1 = Math.sqrt(this.dx * this.dx + this.dy * this.dy);
+                let speed2 = Math.sqrt(other.dx * other.dx + other.dy * other.dy);
+                
+                this.dx = -Math.cos(angle) * speed1;
+                this.dy = -Math.sin(angle) * speed1;
+                other.dx = Math.cos(angle) * speed2;
+                other.dy = Math.sin(angle) * speed2;
             }
         }
+    }
 
-        // Restaurar el color original si no hay colisión
-        if (!isCurrentlyColliding) {
+    flashColor() {
+        this.color = "#0000FF";
+        setTimeout(() => {
             this.color = this.originalColor;
-        }
+        }, 100);
     }
 }
 
